@@ -1,0 +1,189 @@
+PHASE 1
+FastAPI basics
+       ↓
+PHASE 2
+PostgreSQL + SQLAlchemy
+       ↓
+PHASE 3
+Models + relationships
+       ↓
+PHASE 4
+Pydantic schemas
+       ↓
+PHASE 5
+Router → Service → Repository
+       ↓
+PHASE 6
+CRUD
+       ↓
+PHASE 7
+Pagination + filtering + search
+       ↓
+PHASE 8
+JWT authentication
+       ↓
+PHASE 9
+Permissions / roles
+       ↓
+PHASE 10
+Alembic migrations
+       ↓
+PHASE 11
+Testing
+       ↓
+PHASE 12
+Docker + deployment
+
+
+
+| Method | Endpoint                | Purpose                   |
+| ------ | ----------------------- | ------------------------- |
+| POST   | `/auth/register`        | Register a new user       |
+| POST   | `/auth/login`           | Login and get tokens      |
+| GET    | `/auth/me`              | Get logged-in user        |
+| POST   | `/auth/refresh-token`   | Generate new access token |
+| POST   | `/auth/logout`          | Logout                    |
+| POST   | `/auth/forgot-password` | Request password reset    |
+| POST   | `/auth/reset-password`  | Reset password            |
+| POST   | `/auth/change-password` | Change password           |
+
+
+
+| Method | Endpoint                        | Purpose                  |
+| ------ | ------------------------------- | ------------------------ |
+| GET    | `/users`                        | Get all users            |
+| GET    | `/users/{user_id}`              | Get user by ID           |
+| POST   | `/users`                        | Create user *(admin)*    |
+| PUT    | `/users/{user_id}`              | Update user              |
+| DELETE | `/users/{user_id}`              | Delete user              |
+| PATCH  | `/users/{user_id}/status`       | Activate/deactivate user |
+| GET    | `/users/{user_id}/applications` | Get user's applications  |
+GET /users?role=candidate
+GET /users?search=nikita
+GET /users?page=1&limit=10
+
+
+
+
+| Method | Endpoint                      | Purpose                              |
+| ------ | ----------------------------- | ------------------------------------ |
+| POST   | `/jobs`                       | Create a job                         |
+| GET    | `/jobs`                       | Get all jobs                         |
+| GET    | `/jobs/{job_id}`              | Get job details                      |
+| PUT    | `/jobs/{job_id}`              | Update job                           |
+| DELETE | `/jobs/{job_id}`              | Delete job                           |
+| PATCH  | `/jobs/{job_id}/status`       | Open/close job                       |
+| GET    | `/jobs/{job_id}/applications` | Get applications for a job           |
+| GET    | `/jobs/my-jobs`               | Get jobs posted by current recruiter |
+GET /jobs?search=python
+GET /jobs?location=Delhi
+GET /jobs?job_type=full_time
+GET /jobs?experience=2
+GET /jobs?salary_min=30000&salary_max=60000
+GET /jobs?page=1&limit=10
+
+
+
+
+| Method | Endpoint                                | Purpose                             |
+| ------ | --------------------------------------- | ----------------------------------- |
+| POST   | `/applications`                         | Apply for a job                     |
+| GET    | `/applications`                         | Get applications                    |
+| GET    | `/applications/{application_id}`        | Get application details             |
+| PUT    | `/applications/{application_id}`        | Update application                  |
+| DELETE | `/applications/{application_id}`        | Withdraw application                |
+| PATCH  | `/applications/{application_id}/status` | Change application status           |
+| GET    | `/applications/my-applications`         | Get current user's applications     |
+| GET    | `/jobs/{job_id}/applications`           | Get applications for a specific job |
+APPLIED
+SHORTLISTED
+INTERVIEW
+REJECTED
+HIRED
+WITHDRAWN
+
+Authentication → Users → Jobs → Applications → relationships → pagination/filtering → testing → Docker/deployment.
+
+
+Viewed job.py:1-25
+Viewed application.py:1-22
+Created job.py
+Created application.py
+Created common.py
+Created user.py
+Created job.py
+Created application.py
+Created __init__.py
+Searched for "email"
+Edited user.py
+Edited user.py
+Viewed application.py:1-43
+Viewed job.py:1-54
+Viewed __init__.py:1-6
+Viewed main.py:1-22
+
+I reviewed all your required endpoints and updated the **database tables** and **Pydantic schemas** so you have every single Request and Response model ready to build your APIs.
+
+
+🔐 AUTHENTICATION -done
+Method	Endpoint	Request Model	Response Model
+POST	/auth/register	UserCreate	UserResponse
+POST	/auth/login	UserLogin	Token
+GET	/auth/me	— (Bearer token)	UserResponse
+POST	/auth/refresh-token	RefreshTokenRequest	Token
+POST	/auth/logout	— (Bearer token)	MessageResponse
+POST	/auth/forgot-password	ForgotPasswordRequest	MessageResponse
+POST	/auth/reset-password	ResetPasswordRequest	MessageResponse
+POST	/auth/change-password	ChangePasswordRequest	MessageResponse
+
+
+👤 USERS
+Method	Endpoint	Request Model / Query	Response Model
+GET	/users	Query: role, search, page, limit	list[UserResponse] - done 
+GET	/users/{id}	Path: id: int	UserResponse - done 
+POST	/users	UserAdminCreate	UserResponse 
+PUT	/users/{id}	UserUpdate	UserResponse - done 
+DELETE	/users/{id}	Path: id: int	MessageResponse - done 
+PATCH	/users/{id}/status	UserStatusUpdate	UserResponse -done
+GET	/users/{id}/applications	Path: id: int	UserApplicationsResponse - done
+
+
+
+💼 JOBS
+Method	Endpoint	Request Model / Query	Response Model
+POST	/jobs	JobCreate	JobResponse
+GET	/jobs	Query: search, location, job_type, experience, salary_min, salary_max, page, limit	list[JobResponse]
+GET	/jobs/{id}	Path: id: int	JobResponse
+PUT	/jobs/{id}	JobUpdate	JobResponse
+DELETE	/jobs/{id}	Path: id: int	MessageResponse
+PATCH	/jobs/{id}/status	JobStatusUpdate	JobResponse
+GET	/jobs/my-jobs	— (Bearer token)	list[JobResponse]
+GET	/jobs/{id}/applications	Path: id: int	JobApplicationsResponse - done
+
+
+📝 APPLICATIONS
+Method	Endpoint	Request Model / Query	Response Model
+POST	/applications	ApplicationCreate	ApplicationCreateResponse - done
+GET	/applications	Query: page, limit, status	AllApplicationResponse - done
+GET	/applications/{id}	Path: id: int	ApplicationResponseWrapper - done
+PATCH	/applications/{id}	ApplicationUpdate	UpdateApplicationResponse - done
+DELETE	/applications/{id}	Path: id: int	DeleteResponseWrapper - done
+PATCH	/applications/{id}/status	ApplicationStatusUpdate	ApplicationStatusResponse - done
+GET	/applications/my-applications	Query: page, limit	MyApplicationsResponse - done
+
+
+
+
+
+//need to do
+GET /jobs/my-jobs — Recruiter gets the list of jobs they personally posted. - done
+PATCH /jobs/{id}/status — Open or close a job (is_active: true/false). - done
+GET /jobs/{id}/applications — Recruiter sees applicants for their job. - 
+👤 Users:
+PATCH /users/{id}/status — Activate or deactivate a user account (is_active: true/false).-done
+GET /users/{id}/applications — Applications submitted by a user.
+POST /users — Admin creates a user directly. 
+🔐 Auth:
+GET /auth/me — Returns the currently logged-in user profile from the token.- done
+
+
